@@ -72,7 +72,7 @@ namespace ImZoomSlider
       const int componentIndex = isVertical ? 1 : 0;
       const ImVec2 scrollBarMin = ImGui::GetItemRectMin();
       const ImVec2 scrollBarMax = ImGui::GetItemRectMax();
-      const ImVec2 scrollBarA = ImVec2(scrollBarMin.x, scrollBarMin.y) - (isVertical ? ImVec2(2,0) : ImVec2(0,2));
+      const ImVec2 scrollBarA = isVertical ? ImVec2(scrollBarMin.x - 2.f, scrollBarMin.y) : ImVec2(scrollBarMin.x,scrollBarMin.y - 2.f);
       const ImVec2 scrollBarB = isVertical ? ImVec2(scrollBarMax.x - 1.f, scrollBarMin.y + canvasSizeLength) : ImVec2(scrollBarMin.x + canvasSizeLength, scrollBarMax.y - 1.f);
       const float scrollStart = ((viewLower - lower) / (higher - lower)) * canvasSizeLength + scrollBarMin[componentIndex];
       const float scrollEnd = ((viewHigher - lower) / (higher - lower)) * canvasSizeLength + scrollBarMin[componentIndex];

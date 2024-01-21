@@ -507,7 +507,7 @@ struct MySequence : public ImSequencer::SequenceInterface
       draw_list->PopClipRect();
 
       ImGui::SetCursorScreenPos(rc.Min);
-      ImCurveEdit::Edit(rampEdit, rc.Max - rc.Min, 137 + index, &clippingRect);
+      ImCurveEdit::Edit(rampEdit, ImVec2(rc.Max.x - rc.Min.x, rc.Max.y - rc.Min.y), 137 + index, &clippingRect);
    }
 
    virtual void CustomDrawCompact(int index, ImDrawList* draw_list, const ImRect& rc, const ImRect& clippingRect)
