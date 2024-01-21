@@ -41,24 +41,82 @@
 #include <vector>
 #include <algorithm>
 
-
-class ImApp {
-   struct Config {
-      int mWidth = 1280;
-      int mHeight = 720;
-      bool mFullscreen = false;
+namespace ImApp {
+   struct Config
+   {
+      Config() : mWidth(1280), mHeight(720), mFullscreen(false) {}
+      int mWidth;
+      int mHeight;
+      bool mFullscreen;
    };
 
-   void Init(Config cfg);
-   bool Done();
-   void NewFrame();
-   void EndFrame();
-   void Finish();
-};
+   class ImApp {
+   public:
+      Config mConfig;
+      bool isQuit = false;
+      SDL_GLContext gl_context;
+      SDL_Window* window;
+      const char* glsl_version = "#version 460 core";
 
-ImVec2 Sub(ImVec2 a, ImVec2 b) {
-   return ImVec2(a.x - b.x, a.y - b.y);
+      bool Done() {
+         return isQuit;
+      }
+
+      void Init(Config cfg) {
+         mConfig = cfg;
+         SDL_Init(SDL_INIT_EVENTS | SDL_INIT_VIDEO);
+
+         SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+         window = SDL_CreateWindow(
+            "SceneGL + ImGUI + OpenGL4", 
+            SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
+            cfg.mWidth, cfg.mHeight, 
+            window_flags
+         );
+         gl_context = SDL_GL_CreateContext(window);
+
+         SDL_GL_MakeCurrent(window, gl_context);
+         SDL_GL_SetSwapInterval(1); // Enable vsync
+
+         ImGui::CreateContext();
+         ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
+         ImGui_ImplOpenGL3_Init(glsl_version);
+      }
+
+      void NewFrame() {
+         SDL_Event event;
+         while (SDL_PollEvent(&event)) {
+            ImGui_ImplSDL2_ProcessEvent(&event);
+            if (event.type == SDL_QUIT) {
+               isQuit = true;
+            }
+         }
+
+         ImGui_ImplOpenGL3_NewFrame();
+         ImGui_ImplSDL2_NewFrame();
+         ImGui::NewFrame();
+      }
+
+      void EndFrame() {
+         ImGui::Render();
+         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+         SDL_GL_SwapWindow(window);
+      }
+
+      void Finish() {
+         // shutdown imgui
+         ImGui_ImplOpenGL3_Shutdown();
+         ImGui_ImplSDL2_Shutdown();
+         ImGui::DestroyContext();
+
+         // shutdown sdl2
+         SDL_GL_DeleteContext(gl_context);
+         SDL_DestroyWindow(window);
+         SDL_Quit();
+      }
+   };
 }
+
 
 bool useWindow = true;
 int gizmoCount = 1;
