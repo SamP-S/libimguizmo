@@ -23,11 +23,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-#define IMGUI_DEFINE_MATH_OPERATORS
+
+#define GL_VERSION_4_4
+#include <GL/glew.h>
+#include <SDL.h>
 #include "imgui.h"
 #include "imgui_internal.h"
-#define IMAPP_IMPL
-#include "ImApp.h"
+#include "backends/imgui_impl_sdl2.h"
+#include "backends/imgui_impl_opengl3.h"
 
 #include "ImGuizmo.h"
 #include "ImSequencer.h"
@@ -37,6 +40,25 @@
 #include <math.h>
 #include <vector>
 #include <algorithm>
+
+
+class ImApp {
+   struct Config {
+      int mWidth = 1280;
+      int mHeight = 720;
+      bool mFullscreen = false;
+   };
+
+   void Init(Config cfg);
+   bool Done();
+   void NewFrame();
+   void EndFrame();
+   void Finish();
+};
+
+ImVec2 Sub(ImVec2 a, ImVec2 b) {
+   return ImVec2(a.x - b.x, a.y - b.y);
+}
 
 bool useWindow = true;
 int gizmoCount = 1;
@@ -683,7 +705,7 @@ int main(int, char**)
    ImApp::Config config;
    config.mWidth = 1280;
    config.mHeight = 720;
-   //config.mFullscreen = true;
+   config.mFullscreen = true;
    imApp.Init(config);
 
    int lastUsing = 0;

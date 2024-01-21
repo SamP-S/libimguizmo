@@ -38,3 +38,8 @@ add_library(imguizmo STATIC ${SRC_FILES})
 target_include_directories(imguizmo PUBLIC ${INCLUDE_DIRS})
 target_link_libraries(imguizmo PUBLIC imgui)
 target_link_libraries(imguizmo PUBLIC ${CMAKE_DL_LIBS})
+
+
+add_executable(imguizmo_example "example/main.cpp")
+target_include_directories(imguizmo_example PUBLIC "." "example")
+target_link_libraries(imguizmo_example PUBLIC imguizmo)
